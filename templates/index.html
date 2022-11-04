@@ -25,7 +25,23 @@
 <div class="container">
 
 <img src="data:;base64,{{ image }}" width="500" height="500" class="rounded mx-auto d-block">
-
+<hr>
+<div class="container-fluid text-center">
+  {% for i in hexname %}
+    {% set item_1 = hexname[loop.index-1] %}
+    {% set item_2 = hexper[loop.index-1] %}
+    <div class="row justify-content-center">
+      <div class="card" style="width: 18rem;">
+         <div class="card-header" style="background-color: {{ item_1 }};">
+         </div>
+         <ul class="list-group list-group-flush">
+           <li class="list-group-item">{{ item_1 }} appears {{ item_2 }}% of the time</li>
+         </ul>
+      </div>
+    </div>
+  <br>
+  {% endfor %}
+</div>
 </div>
 
 
