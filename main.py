@@ -41,30 +41,30 @@ def rgb_to_hex(rgb_list):
 def home():
     form = UploadForm()
     images = Img.query.all()
-    image_data = images[0]
-    image = b64encode(image_data.img).decode("utf-8")
+    if images:
+        image_data = images[0]
+        image = b64encode(image_data.img).decode("utf-8")
 
-    # above is for displaying the image on the web page
+        # above is for displaying the image on the web page
 
-    #  -------------------------------------- code for making hexcode -------------------------------#
-    an_image = BytesIO(image_data.img)
-    the_img = Image.open(an_image)
-    hex_list = []
-    data = asarray(the_img)
-    for dimension in data:
-        for i in range(len(dimension)):
-            hex_list.append(rgb_to_hex(dimension[i]))
-    hex_dataframe = pd.DataFrame({'HexCodes': hex_list})
-    sum_hex = hex_dataframe.count()
-    top_10 = hex_dataframe['HexCodes'].value_counts().reset_index().head(10)
-    top_10['Percentage'] = (top_10['HexCodes'] / sum_hex.values) * 100
-    top_10_dict = top_10.to_dict()
-    top_10_hex = []
-    top_10_hexper = []
-    for i in range(10):
-        top_10_hex.append(top_10_dict['index'][i])
-        top_10_hexper.append(round(top_10_dict['Percentage'][i], 2))
-
+        #  -------------------------------------- code for making hexcode -------------------------------#
+        an_image = BytesIO(image_data.img)
+        the_img = Image.open(an_image)
+        hex_list = []
+        data = asarray(the_img)
+        for dimension in data:
+            for i in range(len(dimension)):
+                hex_list.append(rgb_to_hex(dimension[i]))
+        hex_dataframe = pd.DataFrame({'HexCodes': hex_list})
+        sum_hex = hex_dataframe.count()
+        top_10 = hex_dataframe['HexCodes'].value_counts().reset_index().head(10)
+        top_10['Percentage'] = (top_10['HexCodes'] / sum_hex.values) * 100
+        top_10_dict = top_10.to_dict()
+        top_10_hex = []
+        top_10_hexper = []
+        for i in range(10):
+            top_10_hex.append(top_10_dict['index'][i])
+            top_10_hexper.append(round(top_10_dict['Percentage'][i], 2))
     #  -------------------------------------- code for making hexcode -------------------------------#
     if form.validate_on_submit():
         new_img = form.file.data
@@ -74,8 +74,11 @@ def home():
         db.session.add(input_img)
         db.session.commit()
         return redirect(url_for('home'))
-    return render_template('index.html', form=form, image_data=image_data, image=image, hexname=top_10_hex,
+    if images:
+        return render_template('index.html', form=form, image_data=image_data, image=image, hexname=top_10_hex,
                            hexper=top_10_hexper)
+    else:
+        return render_template('index.html', form=form)
 
 
 @app.route("/true")
@@ -84,6 +87,14 @@ def test():
     image_data = images[0]
 
     return Response(image_data.img, mimetype=image_data.mimetype)
+
+
+@app.route("/delete/")
+def delete_post():
+    post_to_delete = Img.query.get(1)
+    db.session.delete(post_to_delete)
+    db.session.commit()
+    return redirect(url_for('home'))
 
 
 if __name__ == "__main__":

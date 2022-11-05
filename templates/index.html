@@ -4,12 +4,16 @@
   <h1 class="display-4">Powered by Flask.</h1>
   <p class="lead">Image Color Palette </p>
   <hr class="my-4">
+  {% if image %}
+  <a href="{{url_for('delete_post') }}"><button type="button" class="btn btn-dark">Delete Image to Start Over</button></a>
+  {% else %}
   <p>Click below to upload an image</p>
   <p>
     <a class="btn btn-dark" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
       Start
     </a>
   </p>
+  {% endif %}
   <div class="collapse" id="collapseExample">
     <div class="card card-body">
       <div class="container">
@@ -23,7 +27,7 @@
   </div>
 </div>
 <div class="container">
-
+{% if image %}
 <img src="data:;base64,{{ image }}" width="500" height="500" class="rounded mx-auto d-block">
 <hr>
 <div class="container-fluid text-center">
@@ -42,6 +46,7 @@
   <br>
   {% endfor %}
 </div>
+{% endif %}
 </div>
 
 
